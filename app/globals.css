@@ -1,26 +1,271 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* Швейцарская палитра: бумага, чернила, hairline, один акцент */
+  --color-paper: #fafaf9;
+  --color-ink: #14161a;
+  --color-line: #e5e5e0;
+  --color-navy: #16305f;
+  --color-gold: #f0a828;
+  --color-muted-ink: #6d7280;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Наследие старой темы — держим совместимость остальных страниц */
+  --color-navy-950: #0c1e40;
+  --color-navy-900: #122a58;
+  --color-navy-800: #16305f;
+  --color-navy-700: #1e3f7d;
+  --color-navy-600: #2a5099;
+  --color-navy-100: #dbe6f6;
+  --color-navy-50: #eef3fb;
+  --color-gold-500: #f0a828;
+  --color-gold-400: #f5bc4e;
+  --color-gold-100: #fdf0d7;
+  --color-page: #fafaf9;
+  --color-muted: #6d7280;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-golos), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-unbounded), var(--font-golos), ui-sans-serif,
+    system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "Cascadia Mono", monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-golos), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer components {
+  .container-page {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 76rem;
+    padding-inline: 1rem;
+  }
+  @media (min-width: 640px) {
+    .container-page {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  /* Фоновая типографская сетка для hero-блоков */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgb(20 22 26 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(20 22 26 / 0.045) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  .card {
+    border-radius: 0;
+    border: 1px solid var(--color-line);
+    background-color: #fff;
+  }
+
+  .eyebrow {
+    font-family: var(--font-plex-mono), monospace;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 2px;
+    padding: 0.6875rem 1.25rem;
+    font-family: var(--font-plex-mono), monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease,
+      border-color 0.15s ease,
+      opacity 0.15s ease;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    background-color: var(--color-ink);
+    color: #fff;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background-color: #000;
+  }
+  .btn-accent {
+    background-color: var(--color-gold);
+    color: var(--color-ink);
+  }
+  .btn-accent:hover:not(:disabled) {
+    background-color: #e09a12;
+  }
+  .btn-ghost {
+    border: 1px solid var(--color-line);
+    background-color: transparent;
+    color: var(--color-ink);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    border-color: var(--color-ink);
+  }
+  .btn-danger {
+    border: 1px solid #fecdd3;
+    background-color: transparent;
+    color: #be123c;
+  }
+  .btn-danger:hover:not(:disabled) {
+    background-color: #fff1f2;
+  }
+  .btn-success {
+    border: 1px solid #bbf7d0;
+    background-color: transparent;
+    color: #15803d;
+  }
+  .btn-success:hover:not(:disabled) {
+    background-color: #f0fdf4;
+  }
+
+  .input {
+    width: 100%;
+    border-radius: 2px;
+    border: 1px solid var(--color-line);
+    background-color: #fff;
+    padding: 0.6875rem 0.875rem;
+    font-size: 0.875rem;
+    color: var(--color-ink);
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .input::placeholder {
+    color: #9aa0ab;
+  }
+  .input:focus {
+    border-color: var(--color-ink);
+  }
+
+  .label {
+    display: block;
+    margin-bottom: 0.4375rem;
+    font-family: var(--font-plex-mono), monospace;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-muted-ink);
+  }
+  .label strong,
+  .label b {
+    color: var(--color-ink);
+  }
+
+  /* Статусы и метки: mono uppercase, точка цвета — вместо цветных пилюль */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4375rem;
+    border-radius: 2px;
+    border: 1px solid var(--color-line);
+    padding: 0.28rem 0.55rem;
+    font-family: var(--font-plex-mono), monospace;
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--color-muted-ink);
+    background: transparent;
+  }
+  .badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+  .badge-navy {
+    color: var(--color-navy);
+  }
+  .badge-gold {
+    color: #92610a;
+    border-color: rgb(240 168 40 / 0.45);
+  }
+  .badge-green {
+    color: #15803d;
+  }
+  .badge-red {
+    color: #b91c1c;
+  }
+  .badge-gray {
+    color: var(--color-muted-ink);
+  }
+  /* Бейдж без точки (для текстовых плашек с иконкой) */
+  .badge-plain::before {
+    display: none;
+  }
+
+  .h1 {
+    font-family: var(--font-unbounded), var(--font-golos), ui-sans-serif,
+      system-ui, sans-serif;
+    font-size: clamp(1.75rem, 1.2rem + 2vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.08;
+    color: var(--color-ink);
+  }
+  .h2 {
+    font-size: 1.1875rem;
+    line-height: 1.5;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+  }
+
+  .muted {
+    color: var(--color-muted-ink);
+    font-size: 0.875rem;
+  }
+
+  .meta {
+    font-family: var(--font-plex-mono), monospace;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-muted-ink);
+  }
+
+  .skeleton {
+    border-radius: 2px;
+    background: linear-gradient(
+      100deg,
+      var(--color-line) 40%,
+      #f1f1ee 50%,
+      var(--color-line) 60%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-wave 1.4s ease infinite;
+  }
+  @keyframes skeleton-wave {
+    from {
+      background-position: 120% 0;
+    }
+    to {
+      background-position: -80% 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton {
+      animation: none;
+    }
+  }
 }
