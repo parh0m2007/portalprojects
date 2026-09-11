@@ -242,6 +242,7 @@ export function Header() {
                   <div className="absolute right-0 mt-2 w-60 border border-line bg-white py-1.5 shadow-[4px_4px_0_0_var(--color-line)]">
                     {[
                       { href: "/my", label: "Мои мероприятия" },
+                      { href: "/my/orgs", label: "Организации" },
                       { href: "/my/registrations", label: "Мои регистрации" },
                       { href: "/judge", label: "Судейство" },
                     ].map((item) => (

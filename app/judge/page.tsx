@@ -32,6 +32,7 @@ type SolutionCard = {
   event_title: string;
   team_name: string | null;
   case_title: string | null;
+  blind_judging: boolean;
   total_score: number;
   judges_count: number;
 };
@@ -69,7 +70,7 @@ function JudgePanel() {
   );
 
   const queueQuery = useList<SolutionCard>({
-    resource: "solution_cards",
+    resource: "judge_work_cards",
     filters: [
       { field: "event_id", operator: "in", value: acceptedEventIds },
     ],
@@ -173,7 +174,9 @@ function JudgePanel() {
                     </p>
                     <h3 className="mt-1 font-bold">{sol.title}</h3>
                     <p className="muted mt-0.5">
-                      {sol.team_name || "Без команды"}
+                      {sol.team_name === null
+                        ? "Авторство скрыто (слепое судейство)"
+                        : sol.team_name || "Без команды"}
                       {sol.description ? ` — ${sol.description}` : ""}
                     </p>
                   </div>

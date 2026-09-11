@@ -32,6 +32,7 @@ type SolutionCard = {
   event_title: string;
   team_name: string | null;
   case_title: string | null;
+  blind_judging: boolean;
   total_score: number;
   judges_count: number;
 };
@@ -60,7 +61,7 @@ function ReviewForm() {
   const invalidate = useInvalidate();
 
   const { result: solution, query } = useOne<SolutionCard>({
-    resource: "solution_cards",
+    resource: "judge_work_cards",
     id,
   });
 
@@ -193,8 +194,10 @@ function ReviewForm() {
           </div>
           <h1 className="h1 mt-3">{solution.title}</h1>
           <p className="muted mt-1">
-            {solution.team_name || "Без команды"} · загружено{" "}
-            {formatDate(solution.created_at)}
+            {solution.team_name === null
+              ? "Авторство скрыто (слепое судейство)"
+              : solution.team_name || "Без команды"}{" "}
+            · загружено {formatDate(solution.created_at)}
           </p>
           {solution.description && (
             <p className="mt-4 whitespace-pre-wrap leading-relaxed text-[15px] text-slate-700">

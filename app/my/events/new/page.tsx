@@ -38,6 +38,7 @@ function NewEventForm() {
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
+  const [blindJudging, setBlindJudging] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -97,6 +98,7 @@ function NewEventForm() {
           place,
           author_id: identity.id,
           status: "published",
+          blind_judging: blindJudging,
           starts_at: startsAt ? new Date(startsAt).toISOString() : null,
           registration_deadline: deadline
             ? new Date(deadline).toISOString()
@@ -270,6 +272,24 @@ function NewEventForm() {
               )}
             </div>
           </Field>
+
+          {format === "case" && (
+            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4">
+              <input
+                type="checkbox"
+                className="mt-0.5 h-4 w-4"
+                checked={blindJudging}
+                onChange={(e) => setBlindJudging(e.target.checked)}
+              />
+              <span>
+                <span className="block font-bold">Слепое судейство</span>
+                <span className="muted mt-1 block text-xs leading-relaxed">
+                  Судьи не видят названия команд до публикации итогов —
+                  честная оценка без предвзятости.
+                </span>
+              </span>
+            </label>
+          )}
 
           <Field label="Название" required>
             <input
