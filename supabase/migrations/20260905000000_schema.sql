@@ -357,7 +357,11 @@ create policy "scores: видеть участникам события"
 -- ============================================================
 
 -- Статистика мероприятий (счётчики публичны, данные не раскрывают)
-create or replace view public.event_stats as
+-- drop перед create: view может существовать в расширенной версии
+-- (миграция team_capacity_social), а CREATE OR REPLACE не может
+-- изменять набор колонок
+drop view if exists public.event_stats;
+create view public.event_stats as
 select
   e.id as event_id,
   (select count(*) from public.registrations r where r.event_id = e.id) as participants_count,

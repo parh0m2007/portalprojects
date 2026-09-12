@@ -28,6 +28,9 @@
 /mcp/dist
 /mcp/node_modules
 
+# supabase cli
+/supabase/.temp
+
 # debug
 npm-debug.log*
 yarn-debug.log*
