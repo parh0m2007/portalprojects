@@ -42,6 +42,7 @@ export const POST = withApiKey(async (ctx, req) => {
     "registration.status_changed",
     "solution.uploaded",
     "results.published",
+    "contact_request.created",
   ];
   const events = (body.events ?? ["registration.created"]).filter((e) =>
     allowed.includes(e),

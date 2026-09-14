@@ -8,9 +8,11 @@ import { supabaseClient } from "@/lib/supabase";
 import type { Identity } from "@/lib/auth";
 
 const NAV = [
-  { href: "/works", label: "Работы" },
   { href: "/", label: "События" },
-  { href: "/calendar", label: "Календарь" },
+  { href: "/inventions", label: "Изобретения" },
+  { href: "/investors", label: "Инвесторы" },
+  { href: "/mentorship", label: "Наставники" },
+  { href: "/works", label: "Работы" },
   { href: "/leaderboard", label: "Лидеры" },
 ];
 
@@ -247,8 +249,12 @@ export function Header() {
                   <div className="absolute right-0 mt-2 w-60 border border-line bg-white py-1.5 shadow-[4px_4px_0_0_var(--color-line)]">
                     {[
                       { href: "/my", label: "Мои мероприятия" },
+                      { href: "/my/inventions", label: "Мои изобретения" },
                       { href: "/my/orgs", label: "Организации" },
                       { href: "/my/registrations", label: "Мои регистрации" },
+                      { href: "/mentorship", label: "Наставничество" },
+                      { href: "/my/mentor", label: "Профиль наставника" },
+                      { href: "/my/investor", label: "Профиль инвестора" },
                       { href: "/judge", label: "Судейство" },
                     ].map((item) => (
                       <Link

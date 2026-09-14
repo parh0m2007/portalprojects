@@ -510,6 +510,99 @@ tool(
 );
 
 // ---------------------------------------------------------------
+// 9. Витрина изобретений (Союз изобретателей)
+// ---------------------------------------------------------------
+tool(
+  "list_inventions",
+  "Витрина изобретений Союза: стадия, патентный статус, сферы, цель инвестиций",
+  {
+    stage: z
+      .enum(["idea", "prototype", "mvp", "patent_pending", "patented", "market"])
+      .optional()
+      .describe("Фильтр по стадии готовности"),
+    sector: z.string().optional().describe("Фильтр по сфере (подстрока)"),
+    limit: z.number().int().min(1).max(100).default(20),
+  },
+  async (args) => {
+    let query = db
+      .from("invention_cards")
+      .select(
+        "id, title, summary, stage, patent_status, sectors, funding_goal, visibility, author_name, created_at",
+      )
+      .order("created_at", { ascending: false })
+      .limit((args.limit as number) ?? 20);
+    if (args.stage) query = query.eq("stage", args.stage as string);
+
+    const { data: inventions, error } = await query;
+    if (error) return fail(error.message);
+
+    const sector = String(args.sector ?? "").toLowerCase();
+    return ok(
+      (inventions ?? [])
+        .filter(
+          (i: { sectors?: string[] }) =>
+            !sector ||
+            (i.sectors ?? []).some((s) => s.toLowerCase().includes(sector)),
+        )
+        .map((i: Record<string, unknown>) => ({
+          id: i.id,
+          title: i.title,
+          summary: i.summary,
+          stage: i.stage,
+          patent_status: i.patent_status,
+          sectors: i.sectors,
+          funding_goal: i.funding_goal,
+          visibility: i.visibility,
+          author: i.author_name,
+          created_at: i.created_at,
+        })),
+    );
+  },
+);
+
+tool(
+  "match_investors",
+  "Подобрать инвесторов под изобретение (секторы + семантика тезиса)",
+  {
+    invention_id: z.string().uuid(),
+    limit: z.number().int().min(1).max(20).default(5),
+  },
+  async (args) => {
+    const { data, error } = await db.rpc("recommended_investors", {
+      inv: args.invention_id,
+      limit_count: (args.limit as number) ?? 5,
+    });
+    if (error) return fail(error.message);
+    return ok({ investors: data ?? [] });
+  },
+);
+
+tool(
+  "request_mentor",
+  "Отправить заявку на наставничество от имени авторизованного пользователя",
+  {
+    mentor_user_id: z.string().uuid().describe("ID профиля наставника"),
+    topic: z.string().min(3).describe("Тема: чем нужна помощь"),
+    message: z.string().default(""),
+    invention_id: z.string().uuid().optional().describe("Контекст: ID изобретения"),
+  },
+  async (args) => {
+    const userId = await currentUserId();
+    if (!userId) return fail("Нет сессии организатора");
+
+    const { error } = await db.from("mentorship_requests").insert({
+      mentor_id: args.mentor_user_id,
+      mentee_id: userId,
+      invention_id: args.invention_id ?? null,
+      topic: String(args.topic),
+      message: String(args.message ?? ""),
+    });
+    if (error) return fail(error.message);
+    return ok({ requested: true, mentor_id: args.mentor_user_id });
+  },
+);
+
+// ---------------------------------------------------------------
 // Старт
 // ---------------------------------------------------------------
 const transport = new StdioServerTransport();

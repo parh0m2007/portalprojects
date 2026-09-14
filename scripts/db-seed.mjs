@@ -51,13 +51,19 @@ try {
 }
 
 const seed = readFileSync(join(root, "supabase", "seed.sql"), "utf8");
+const seedInventors = readFileSync(join(root, "supabase", "seed_inventors.sql"), "utf8");
 try {
   await client.query("begin");
   await client.query(seed);
+  await client.query(seedInventors);
   await client.query("commit");
   console.log("✓ Демо-данные загружены.");
   console.log("  Организатор: anna@demo.ru / demo1234");
   console.log("  Судьи: petr@demo.ru, maria@demo.ru (demo1234)");
+  console.log("  Инвестор (одобрен): investor1@demo.ru / demo1234");
+  console.log("  Инвестор (на модерации): investor2@demo.ru / demo1234");
+  console.log("  Наставник (одобрен): mentor1@demo.ru / demo1234");
+  console.log("  Наставник (на модерации): mentor2@demo.ru / demo1234");
 } catch (err) {
   await client.query("rollback").catch(() => {});
   console.error(`✗ Сид не выполнен: ${err.message}`);
