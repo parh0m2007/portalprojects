@@ -30,6 +30,7 @@ export function Header() {
   const { mutate: logout } = useLogout();
   const [menuOpen, setMenuOpen] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const bellRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -71,6 +72,10 @@ export function Header() {
     }
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
   function openNotification(n: Notification) {
@@ -139,7 +144,7 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          {isLoading ? null : identity ? (
+          {!mounted || isLoading ? null : identity ? (
             <>
               {/* Уведомления */}
               <div className="relative" ref={bellRef}>
